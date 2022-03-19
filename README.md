@@ -1,7 +1,9 @@
 首先贴一下北京交通大学图像处理与机器学习的课程地址：
 
 https://www.icourse163.org/course/NJTU-1462091162?tid=1467147488
+
 https://www.icourse163.org/course/NJTU-1462091162?tid=1467147488
+
 https://www.icourse163.org/course/NJTU-1462091162?tid=1467147488
 
 感谢老师精心准备的课程内容。
@@ -14,7 +16,9 @@ https://www.icourse163.org/course/NJTU-1462091162?tid=1467147488
 其中若有各种不足之处,欢迎大家提供给我宝贵意见,感激不尽。
 
 目前更新的目录结构:
+    
     图像处理与机器学习
+    
         |---第二章 图像增强 空间域
             |---1.灰度变换
             |---2.直方图均衡
