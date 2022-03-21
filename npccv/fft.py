@@ -44,9 +44,13 @@ def FFT2(img,shift = False,depart = True):
 
     return  stm,pse
 
-def iFFT2(fft2res):
+def Shift(fft2res):
+    pass
+
+def iFFT2(fft2res,returnReal = True):
     """
     fft2res:单通道
+    returnReal:是否只返回实部,默认true
     """
     h,w = fft2res.shape
     wMh = np.array([[hi for wi in range(w)] for hi in range(w)])
@@ -60,7 +64,11 @@ def iFFT2(fft2res):
     G3 = 1/w * np.power(math.e,c1 * wMw * wMh / w)
     G4 = 1/h * np.power(math.e,c1 * hMw * hMh / h)
 
-    img = np.dot(np.dot(G4,fft2res),G3).astype(np.int)
+    fft2res = fft2res.astype(np.complex)
+    img = np.dot(np.dot(G4,fft2res),G3)
+    if returnReal:
+        img = np.abs(img) 
+    img = np.rot90(img, 2)
 
     return  img
 
