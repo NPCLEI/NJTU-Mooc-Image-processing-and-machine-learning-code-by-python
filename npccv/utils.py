@@ -3,11 +3,14 @@ import numpy as np
 import cv2
 import matplotlib.pyplot as plt
 
-def distMat(img,center = (0,0)):
+def distMat(img,center = (0,0),sqrt = True):
     ch,cw = center
     h,w = img.shape
     res = np.array([[(wi - cw) ** 2 + (hi - ch) ** 2 for wi in range(w)] for hi in range(h)])
-    return np.power(res,0.5)
+    if sqrt:
+        return np.power(res,0.5)
+    else:
+        return res
 
 def drawCircleToMat(img,r = 1 ,center=(-1,-1),clone = True):
     if clone:
@@ -15,7 +18,7 @@ def drawCircleToMat(img,r = 1 ,center=(-1,-1),clone = True):
     h,w = img.shape
     x,y = center
     if center == (-1,-1):
-        x,y = (h//2,w//2)
+        x,y = (w//2,h//2)
 
     maxv = np.max(img)
 
