@@ -4,8 +4,17 @@ import cv2
 import matplotlib.pyplot as plt
 
 def distMat(img,center = (0,0),sqrt = True):
+    """
+        求与img形状一致矩阵中每个点距离center的距离。
+        
+            center(defautl:(0,0)) 其中 (-1,-1)是图片中心
+
+            sqrt(default:True):结果是否开根号
+    """
     ch,cw = center
     h,w = img.shape
+    if center == (-1,-1):
+        ch,cw = h//2,w//2
     res = np.array([[(wi - cw) ** 2 + (hi - ch) ** 2 for wi in range(w)] for hi in range(h)])
     if sqrt:
         return np.power(res,0.5)
