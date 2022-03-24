@@ -20,6 +20,7 @@ class fftimg:
             img:tpye->numpy array,one channel
         """
         self.img = img
+        self.H,self.W = img.shape
         self.fft = nft.FFT2(self.img,depart=False)
         self.stm,self.pse = np.abs(self.fft),np.angle(self.fft)
         self.powerMtx = None
@@ -107,16 +108,61 @@ class fftimg:
         """
         res = np.fft.fftshift(self.fft)
 
-        stm = np.log(np.abs(res))
+        stm = np.log(1+np.abs(res))
         pse = np.angle(res)
 
         return  stm,pse
+
+    def homomorphic(self,yh,yl,d0,c=1,setRes = False):
+
+        fftlf = nft.FFT2(np.log(1+self.img),depart=False)
+        duv = utils.distMat(self.img,(-1,-1))
+
+        import math
+        huv = (yh-yl)*(1 - np.power(math.e,
+                -1 * c * duv / (d0**2)
+            )) + yl
+
+        res = np.power(math.e,nft.iFFT2(huv * fftlf))
+
+        if setRes:
+            self.img = res
+
+        return res
+
+    def retinex(self,gc,setRes = False):
+        """
+            retinex 滤波
+            Parm:
+                gc是高斯二维正态分布的指数常数
+        """
+        import math
+        hxy = np.zeros_like(self.img)
+        wix = np.array([[i for i in range(self.W)] for j in range(self.H)])
+        hix = np.array([[j for i in range(self.W)] for j in range(self.H)])
+
+        hxy = (np.power(wix,2) + np.power(hix,2))/(gc**2)
+        hxy = (1/(2*math.pi*gc*gc)) * np.power(math.e,-0.5 * hxy)
+
+        lf = np.log(1+self.img)
+        lfh = np.log(1+self.img*hxy)
+
+        res = np.power(math.e,lf - lfh)
+
+        #注意，这一步属于线性拉伸，我们得到的结果不在颜色范围内
+        res = utils.Normalization(res) * 255
+
+        if setRes:
+            self.img = res
+        
+        return res
+
 
 def FFT2(img,shift = False,depart = True):
     """
     img:单通道图片
     shift(False):是否将零频域转移到图像中心
-    depart(True):是否将结果的实部和虚部分离
+    depart(True):是否将结果的实部和虚部分离,分离后会将结果放进对数域(方便绘图),如果想自行处理原结果请depart = False
     """
 
     h,w = img.shape
@@ -148,7 +194,7 @@ def FFT2(img,shift = False,depart = True):
     if shift:
         res = np.fft.fftshift(res)
 
-    stm = np.log(np.abs(res))
+    stm = np.log(1+np.abs(res))
     pse = np.angle(res)
 
     return  stm,pse

@@ -3,6 +3,18 @@ import numpy as np
 import cv2
 import matplotlib.pyplot as plt
 
+def OC2TC(img,ofunc):
+    """
+        将只能处理单通道的ofunc用于处理三通道img
+    """
+    h,w,c = img.shape
+    res = np.zeros_like(img,dtype=np.complex)
+
+    for i in range(c):
+        res[:,:,i] = ofunc(img[:,:,i],i)
+
+    return res
+
 def distMat(img,center = (0,0),sqrt = True):
     """
         求与img形状一致矩阵中每个点距离center的距离。
@@ -78,14 +90,14 @@ def readRaw(path):
 
 figure_count = 1
 
-def compare(img,funcs,figsize=(20,20)):
+def compare(img,funcs,figsize=(20,20),cmap = 'gray'):
     global figure_count
     plt.figure(figure_count,figsize=figsize)
     figure_count+=1
     fl = len(funcs)
     for fi,func in zip(range(1,fl+1),funcs):
         plt.subplot(1,fl,fi)
-        plt.imshow(func(img.copy()),cmap='gray')
+        plt.imshow(func(img.copy()),cmap=cmap)
 
 def Normalization(mtx):
     a,i = np.max(mtx),np.min(mtx)
